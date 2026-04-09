@@ -1,8 +1,11 @@
 import {
   BadRequestException,
   ForbiddenException,
+  forwardRef,
+  Inject,
   Injectable,
   InternalServerErrorException,
+  NotFoundException,
 } from '@nestjs/common';
 import { IsNull, Not, Repository } from 'typeorm';
 import { DoctorEntity } from '@database';
@@ -10,7 +13,7 @@ import * as bcrypt from 'bcrypt';
 import { v4 as uuidv4 } from 'uuid';
 import { InjectRepository } from '@nestjs/typeorm';
 import { MailService } from 'modules/mail';
-import { CreateDoctorDto, UpdateDoctorDto } from './dto';
+import { ChangeEmailDto, CreateDoctorDto, UpdateDoctorDto } from './dto';
 import { ImagesService } from 'modules/images';
 import { SpecializationsService } from 'modules/specializations';
 
@@ -19,6 +22,7 @@ export class DoctorsService {
   constructor(
     @InjectRepository(DoctorEntity)
     private readonly doctorRepo: Repository<DoctorEntity>,
+    @Inject(forwardRef(() => MailService))
     private readonly mailService: MailService,
     private readonly imageService: ImagesService,
     private readonly specService: SpecializationsService,
@@ -41,6 +45,22 @@ export class DoctorsService {
       throw new InternalServerErrorException('Emailga xat yuborishda xatolik');
     }
     return doctor;
+  }
+
+  async changeEmail(changeEmailDto: ChangeEmailDto) {
+    const { id, email } = changeEmailDto;
+    const doctor = await this.doctorRepo.findOne({ where: { id, email } });
+    if (!doctor) {
+      throw new NotFoundException('doctor not found');
+    }
+    let code: number;
+    try {
+      const code2 = await this.mailService.sendVerificationCode(doctor);
+      code = code2;
+    } catch (error) {
+      throw new InternalServerErrorException('Emailga xat yuborishda xatolik');
+    }
+    return code;
   }
 
   async activate(link: string) {

@@ -20,7 +20,7 @@ export class MailService {
     });
   }
 
-  async sendVerificationCode(user: UserEntity) {
+  async sendVerificationCode(user: UserEntity | DoctorEntity) {
     const code = randomInt(10000, 100000);
 
     user.verification_code = code;

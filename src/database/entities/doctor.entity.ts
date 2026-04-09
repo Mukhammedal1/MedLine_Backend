@@ -1,5 +1,12 @@
 import { AbstractEntity } from 'database/abstract.entity';
-import { Column, Entity, JoinColumn, ManyToOne, OneToMany, OneToOne } from 'typeorm';
+import {
+  Column,
+  Entity,
+  JoinColumn,
+  ManyToOne,
+  OneToMany,
+  OneToOne,
+} from 'typeorm';
 import { SpecializationEntity } from './specialization.entity';
 import { AppointmentEntity } from './appointment.entity';
 import { ImagesEntity } from './images.entity';
@@ -57,6 +64,12 @@ export class DoctorEntity extends AbstractEntity {
 
   @Column({ type: Number })
   experience: number;
+
+  @Column({ type: Number, nullable: true })
+  verification_code: number | null;
+
+  @Column({ type: Date, nullable: true })
+  code_expires: Date | null;
 
   @ManyToOne(
     () => SpecializationEntity,

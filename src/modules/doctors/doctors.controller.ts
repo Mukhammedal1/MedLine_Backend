@@ -1,6 +1,6 @@
 import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
 import { DoctorsService } from './doctors.service';
-import { CreateDoctorDto, UpdateDoctorDto } from './dto';
+import { ChangeEmailDto, CreateDoctorDto, UpdateDoctorDto } from './dto';
 
 @Controller('doctors')
 export class DoctorsController {
@@ -10,6 +10,11 @@ export class DoctorsController {
   create(@Body() createDoctorDto: CreateDoctorDto) {
     return this.doctorsService.create(createDoctorDto);
   }
+
+  @Post("change-email")
+    changeEmail(@Body() changeEmailDto: ChangeEmailDto) {
+      return this.doctorsService.changeEmail(changeEmailDto);
+    }
 
   @Get()
   findAll() {

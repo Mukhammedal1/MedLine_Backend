@@ -5,6 +5,7 @@ import { join } from 'path';
 import { HandlebarsAdapter } from '@nestjs-modules/mailer/dist/adapters/handlebars.adapter';
 import { ConfigService } from '@nestjs/config';
 import { UsersModule } from 'modules/users';
+import { DoctorsModule } from 'modules/doctors';
 
 @Module({
   imports: [
@@ -33,6 +34,7 @@ import { UsersModule } from 'modules/users';
       inject: [ConfigService],
     }),
     forwardRef(() => UsersModule),
+    forwardRef(() => DoctorsModule),
   ],
   providers: [MailService],
   exports: [MailService],
