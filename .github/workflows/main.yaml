@@ -41,11 +41,30 @@ jobs:
           key: ${{ secrets.VPS_SSH_KEY }}
           port: ${{ secrets.VPS_PORT }}
           script: |
-            docker pull ${{ secrets.DOCKER_USERNAME }}/nestjs-app:latest
             docker stop nestjs-app || true
             docker rm nestjs-app || true
+
+            docker network create medline-network || true
+
+            docker stop medline-db || true
+            docker rm medline-db || true
+
+            docker run -d \
+            --name medline-db \
+            --network medline-network \
+            --restart always \
+            -e POSTGRES_USER=postgres \
+            -e POSTGRES_PASSWORD=ali18022002 \
+            -e POSTGRES_DB=medline \
+            -v prod_pgdata:/var/lib/postgresql/data \
+            postgres:15-alpine
+
+            docker pull ${{ secrets.DOCKER_USERNAME }}/nestjs-app:latest
+
             docker run -d \
             --name nestjs-app \
+            --network medline-network \
             --restart always \
+            --env-file /root/medline.env \
             -p 3001:3000 \
             ${{ secrets.DOCKER_USERNAME }}/nestjs-app:latest
