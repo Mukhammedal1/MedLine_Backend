@@ -47,5 +47,5 @@ jobs:
             docker run -d \
             --name nestjs-app \
             --restart always \
-            -p 3000:3000 \
+            -p 3001:3000 \
             ${{ secrets.DOCKER_USERNAME }}/nestjs-app:latest
